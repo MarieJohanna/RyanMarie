@@ -25,13 +25,13 @@ header {
 }
 
 .image {
-  width: 25%;
+  width: 20%;
   float: left;
 }
 
 figure {
   float: left;
-  padding: 10px;
+  padding: 7px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 5px 5px rgba(168, 168, 168, 0.5);
@@ -40,4 +40,16 @@ figure {
 img {
   width: 100%;
   border-radius: 10px;
+}
+
+@media (maxwidth=450px) {
+  .image {
+    width: 100%;
+  }
+}
+
+@media (minwidth=451px and maxwidth=800px) {
+  .image {
+    width: 30%;
+  }
 }
