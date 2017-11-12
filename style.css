@@ -7,13 +7,37 @@ html {
   color: #19171c;
 }
 
-h1 {
-  font-family: Rock Salt;
-  color: #fff:
-}
-
 header {
   text-align: center;
+  font-family: Rock Salt;
+  color: #fff:
+  width: 100%;
+}
+
+.topnav {
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  z-index: 1;
+  background-color: white;
+  opacity: 0.6;
+}
+
+ul {
+  display: inline-block;
+  list-style-type: none;
+}
+
+.topnav li {
+  float: left;
+  color: black;
+  padding: 0;
+  font-size: 2vw;
+  border-bottom: 1px solid #fff;
+}
+
+.hero img {
+  width: 100%;
 }
 
 .image-column {
@@ -21,11 +45,11 @@ header {
 }
 
 .image {
-  width: 20%;
   float: left;
 }
 
 figure {
+  width: 18%;
   float: left;
   padding: 7px;
   background-color: white;
@@ -33,7 +57,7 @@ figure {
   box-shadow: 5px 5px rgba(168, 168, 168, 0.5);
 }
 
-img {
+.image img {
   width: 100%;
   border-radius: 10px;
 }
