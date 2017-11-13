@@ -40,36 +40,44 @@ ul {
   width: 100%;
 }
 
-.image-column {
-  width: 100%;
-}
-
-.image {
-  float: left;
+.presentation {
+  display: flex;
+  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -ms-flexbox; /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  /*max-width: 1515px;*/
+  /*justify-content: center;*/
+  flex-wrap: wrap;
+  width: 96%;
+  margin: 2%;
+  padding: 0;
 }
 
 figure {
-  width: 18%;
-  float: left;
-  padding: 7px;
+  padding: 10px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 5px 5px rgba(168, 168, 168, 0.5);
 }
 
+.image {
+  width: 21%;
+  border-radius: 10px;
+  margin: 2%;
+}
+
 .image img {
   width: 100%;
-  border-radius: 10px;
 }
-/*
-@media (maxwidth=400px) {
-  .image {
+
+@media (max-width: 450px) {
+  .card {
     width: 100%;
   }
 }
 
-@media (minwidth=401px and maxwidth=800px) {
-  .image {
-    width: 30%;
+@media (min-width: 600px) and (max-width: 1024px) {
+  .card {
+    width: 46%;
   }
-}*/
+}
