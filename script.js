@@ -1,138 +1,183 @@
-//Tar fram ram för olika webläsare
-let requestAnimationFrame = window.requestAnimationFrame ||
+// The star of every good animation
+const requestAnimationFrame = window.requestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
-                            window.msRequestAnimationFrame
+                            window.msRequestAnimationFrame;
 
-//Dessa är i samma array och transformeringar för olika browsers.
-let transforms = ["transform",
+const transforms = ["transform",
                   "msTransform",
                   "webkitTransform",
                   "mozTransform",
-                  "oTransform"]
+                  "oTransform"];
 
-//använder get supportedPN för att kalla in vilket de ska vara.
-var transformProperty = getSupportedPropertyName(transforms);
+const transformProperty = getSupportedPropertyName(transforms);
 
-//Skapar en array för att samla snöflingeobjekt. Anonym array?
-let snowflakes = []
+// Array to store our Snowflake objects
+const snowflakes = [];
 
-//Global variables to store our browser's window size
-let browserWidth
-let browserHeight
+// Global letiables to store our browser's window size
+let browserWidth;
+let browserHeight;
+//dessa måste vara let.
 
-//Hur många snöflingor vill vi ska synas.
-const numberOfSnowflakes = 50
+// Specify the number of snowflakes you want visible
+const numberOfSnowflakes = 50;
 
-//Flagga om snöflinga ska tillbaka till sin ursprungsposition. Testa om vi väljer true.
-const resetPosition = false
+// Flag to reset the position of the snowflakes
+const resetPosition = false;
 
-//Här börjar det...
-const setup = () => {
-  window.addEventListener("DOMContentLoaded", generateSnowflakes, false)
-  window.addEventListener("resize", setResetFlag, false)
+//
+// It all starts here...
+//
+setup = () => {
+	window.addEventListener("DOMContentLoaded", generateSnowflakes, false);
+	window.addEventListener("resize", setResetFlag, false);
 }
-Nu laddas funktionen och startar när sidan är fördigladdad.
-
 setup();
 
-
-let getSupportedPropertyName = (properties) => {
-  for (let i = 0; i < properties.length; i++) {
-    if (typeof document.body.style[properties[i]] != "undefined") {
-      return properties[i]
+//
+// Vendor prefix management - Hur kan denna göras om ?
+//
+function getSupportedPropertyName(properties) {
+    for (let i = 0; i < properties.length; i++) {
+        if (typeof document.body.style[properties[i]] != "undefined") {
+            return properties[i];
+        }
     }
-  }
-  return null
+    return null;
 }
 
-//kör den hör loopen runt och testar webläsarna tills den hittar rätt?
-//Hittar den inget så blir utfall null och snöflingorna faller inte?
+//
+// Constructor for our Snowflake object - Hur kan denna skrivas om?
+//
+function Snowflake(element, radius, speed, xPos, yPos) {
 
-//Konstruktion av snöflingorna
+	// set initial snowflake properties
+    this.element = element;
+    this.radius = radius;
+    this.speed = speed;
+    this.xPos = xPos;
+    this.yPos = yPos;
 
-const SnowFlake = (element, radius, speed, xPos, yPos) => {
+	// declare letiables used for snowflake's motion
+    this.counter = 0;
+    this.sign = Math.random() < 0.5 ? 1 : -1;
 
-//set initial snowflake properties??
-  this.element = element
-  this.raduis = radius
-  this.speed = speed
-  this.xPos = xPos
-  this.yPos = yPos
-
-//Hur flingan ska röra sig
-  this.counter = 0
-  this.sign = Math.random() < 0.5 ? 1 : -1
-
-//opaciteten på snöflingan and storlek
-  this.element.style.opacity = .1 + Math.random()
-  this.element.style.fontSize = 12 + Math.random() * 50 + "px"
+	// setting an initial opacity and size for our snowflake
+    this.element.style.opacity = .1 + Math.random();
+    this.element.style.fontSize = 12 + Math.random() * 50 + "px";
 }
 
-//Den här funktionen bestämmer hur flingorna rör på sig. Animeringsloopen av flingorna
-Snowflake.prototype.update = () => {
+//
+// The function responsible for actually moving our snowflake
+//
+Snowflake.prototype.update = function () {
 
-//trigonometi som bestämmer hur flingorna ska röra sig över skärmen.
-  this.counter += this.speed / 5000
-  this.xPos += this.sign * this.speed * Math.cos(this.counter) / 40
-  this.yPos += Math.sin(this.counter) / 40 + this.speed / 30
+	// using some trigonometry to determine our x and y position
+    this.counter += this.speed / 5000;
+    this.xPos += this.sign * this.speed * Math.cos(this.counter) / 40;
+    this.yPos += Math.sin(this.counter) / 40 + this.speed / 30;
 
-// setting our snowflake's position
-  setTranslate3DTransform(this.element, Math.round(this.xPos), Math.round(this.yPos))
+	// setting our snowflake's position
+    setTranslate3DTransform(this.element, Math.round(this.xPos), Math.round(this.yPos));
 
-//om snöflingan kommer längre ner än 50 pixlar utanflr browser window, börjar animeringen om för den flingan.
-  if (this.yPos > browserHeight) {
-    this.yPos = -50
-  }
+    // if snowflake goes below the browser window, move it back to the top
+    if (this.yPos > browserHeight) {
+    	this.yPos = -50;
+    }
 }
 
-//A performant way to set your snowflake's position
-
-const setTranslate3DTransform = (element, xPosition, yPosition) => {
-  let val = "translate3d(" + xPosition + "px, " + yPosition + "px" + ", 0)"
-    element.style[transformProperty] = val
+//
+// A performant way to set your snowflake's position
+//
+function setTranslate3DTransform(element, xPosition, yPosition) {
+	let val = "translate3d(" + xPosition + "px, " + yPosition + "px" + ", 0)";
+    element.style[transformProperty] = val;
 }
 
-//Denna funktion skapar snöflingan
-const generateSnowflakes = () => {
+//
+// The function responsible for creating the snowflake
+//
+function generateSnowflakes() {
 
-//kallar på snö-elementet från DOM och lagrar det
-  const originalSnowflake = document.querySelector(".snowflake")
+	// get our snowflake element from the DOM and store it
+    let originalSnowflake = document.querySelector(".snowflake");
 
-//går in i elementets container
-  const snowflakeContainer = originalSnowflake.parentNode
+    // access our snowflake element's parent container
+    let snowflakeContainer = originalSnowflake.parentNode;
 
-//kolla browser size
-  browserWidth = document.documentElement.clientWidth
-    browserHeight = document.documentElement.clientHeight
+    // get our browser's size
+	browserWidth = document.documentElement.clientWidth;
+    browserHeight = document.documentElement.clientHeight;
 
-//skapa varje individuell snöflinga
+    // create each individual snowflake
     for (let i = 0; i < numberOfSnowflakes; i++) {
 
-      //klona vår original flinga och lägg till i snowflakeContainer
-      const snowflakeCopy = originalSnowflake.cloneNode(true);
-      snowflakeContainer.appendChild(snowflakeCopy)
+    	// clone our original snowflake and add it to snowflakeContainer
+        let snowflakeCopy = originalSnowflake.cloneNode(true);
+        snowflakeContainer.appendChild(snowflakeCopy);
 
-    //sätt vår snöflingas position och relaterade "properties"
-      let initialXPos = getPosition(50, browserWidth)
-      let initialYPos = getPosition(50, browserHeight)
-      let speed = 5+Math.random()*40
-      let radius = 4+Math.random()*10
+		// set our snowflake's initial position and related properties
+        let initialXPos = getPosition(50, browserWidth);
+        let initialYPos = getPosition(50, browserHeight);
+        let speed = 5+Math.random()*40;
+        let radius = 4+Math.random()*10;
 
-      //skapa vårt snöflinge objekt
-      let snowflakeObject = new Snowflake(snowflakeCopy,
-                          radius,
-                          speed,
-                          initialXPos,
-                          initialYPos)
-      snowflakes.push(snowflakesObject)
+        // create our Snowflake object
+        let snowflakeObject = new Snowflake(snowflakeCopy,
+        									radius,
+        									speed,
+        									initialXPos,
+        									initialYPos);
+        snowflakes.push(snowflakeObject);
     }
 
-  //tar bort origial snöflingan eftersom vi inte behöver den synlig.
-  snowflakeContainer.removeChild(originalSnowflake)
+    // remove the original snowflake because we no longer need it visible
+	snowflakeContainer.removeChild(originalSnowflake);
 
-  //kallar på Snowflakes funktione var 30 milliseconds
-  moveSnowflakes()
+	// call the moveSnowflakes function every 30 milliseconds
+    moveSnowflakes();
 }
 
-//BÖRJA HÄR SEN, MEN HAR LAGT IN FÖR ATT TESTA OM DET FUNGERAR.
+//
+// Responsible for moving each snowflake by calling its update function
+//Ändrat
+//
+const moveSnowflakes= () => {
+    for (let i = 0; i < snowflakes.length; i++) {
+        let snowflake = snowflakes[i];
+        snowflake.update();
+    }
+
+	// Reset the position of all the snowflakes to a new value
+    if (resetPosition) {
+    	browserWidth = document.documentElement.clientWidth;
+	    browserHeight = document.documentElement.clientHeight;
+
+		for (let i = 0; i < snowflakes.length; i++) {
+	        let snowflake = snowflakes[i];
+
+	        snowflake.xPos = getPosition(50, browserWidth);
+	        snowflake.yPos = getPosition(50, browserHeight);
+	    }
+
+	    resetPosition = false;
+    }
+
+    requestAnimationFrame(moveSnowflakes);
+}
+
+//
+// This function returns a number between (maximum - offset) and (maximum + offset)
+//Ändrat
+
+let getPosition = (offset, size) => {
+	return Math.round(-1*offset + Math.random() * (size+2*offset));
+}
+
+//
+// Trigger a reset of all the snowflakes' positions
+//
+function setResetFlag(e) {
+	resetPosition = true;
+}
